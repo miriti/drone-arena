@@ -1,0 +1,20 @@
+{
+  "name": "igdc123-client",
+  "version": "1.0.0",
+  "authors": [
+    "Michael Miriti <michael@miriti.ru>"
+  ],
+  "description": "client",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "requirejs": "~2.1.17"
+  }
+}
