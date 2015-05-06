@@ -4,14 +4,54 @@
     <meta charset="UTF-8">
     <title>igdc 123</title>
     <style>
+        * {
+            font-family: Consolas, Courier, monospace;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
         }
+
+        #modal-container {
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        #modal-container .window-container {
+            margin: 100px auto;
+            padding: 10px;
+            width: 400px;
+            background: white;
+        }
+
+        .window-container input {
+            font-size: 16px;
+            padding: 5px;
+        }
     </style>
 </head>
 <body>
-Loading...
+<div id="canvas-container">
+    Loading...
+</div>
+<div id="modal-container">
+    <div class="window-container">
+        <div>Enter your name:</div>
+
+        <div>
+            <input type="text" id="user-name-input">
+        </div>
+        <div>
+            <button id="join-button">Join</button>
+        </div>
+    </div>
+</div>
+
 <script data-main="js/main" src="js/lib/requirejs/require.js"></script>
 </body>
 </html>

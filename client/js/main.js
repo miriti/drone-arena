@@ -1,8 +1,9 @@
-require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena'], function (PIXI, Scene, Time, net, Arena) {
+require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena', 'input'], function (PIXI, Scene, Time, net, Arena, Input) {
 
     var renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight);
-    document.body.innerHTML = '';
-    document.body.appendChild(renderer.view);
+
+    document.querySelector('#canvas-container').innerHTML = '';
+    document.querySelector('#canvas-container').appendChild(renderer.view);
 
     var scene = new Scene();
 
@@ -32,4 +33,15 @@ require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena'], function (PIXI, 
     animationFrame();
 
     net.connect();
+
+    document.querySelector('#join-button').onclick = function (e) {
+        var name = (document.querySelector('#user-name-input').value).trim();
+        if (name.length >= 3) {
+            document.querySelector('#modal-container').style.display = 'none';
+            net.join(name);
+            Input.init(window);
+        } else {
+            alert('3 characters minimum');
+        }
+    }
 });

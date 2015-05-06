@@ -18,22 +18,24 @@ define(['time', 'keys'], function (Time, Keys) {
         },
         isDown: function () {
             return this.keysPressed[Keys.DOWN_ARROW] || this.keysPressed[Keys.S];
+        },
+        init: function (object) {
+            var self = this;
+            object.addEventListener('keydown', function (e) {
+                e.preventDefault();
+                self.onKeyDown(e);
+            });
+
+            object.addEventListener('keyup', function (e) {
+                e.preventDefault();
+                self.onKeyUp(e);
+            });
         }
     };
 
     for (var i = 0; i < 256; i++) {
         Input.keysPressed[i] = false;
     }
-
-    window.onkeydown = function (e) {
-        e.preventDefault();
-        Input.onKeyDown(e);
-    };
-
-    window.onkeyup = function (e) {
-        e.preventDefault();
-        Input.onKeyUp(e);
-    };
 
     return Input;
 });

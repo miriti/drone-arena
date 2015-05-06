@@ -28,7 +28,6 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
             self.addBot(userData.id, newBot);
 
             self.playerBot = newBot;
-
         });
 
         net.on('join', function (userData) {
@@ -69,7 +68,7 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
 
     Arena.prototype.update = function (delta) {
         GameObject.prototype.update.call(this, delta);
-        
+
         if (this.playerBot !== null) {
             this.x = -this.playerBot.x;
             this.y = -this.playerBot.y;

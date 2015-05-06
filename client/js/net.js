@@ -27,6 +27,7 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
         });
 
         this.socket.on('join', function (userData) {
+            console.log(userData['name'], 'has joined the game');
             self.fire('join', userData);
         });
 
@@ -47,10 +48,6 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
         });
     };
 
-    Net.prototype.changeName = function (newName) {
-        this.socket.emit('name', newName);
-    };
-
     Net.prototype.on = function (event, handler) {
         this.eventListeners[event] = this.eventListeners[event] || [];
         this.eventListeners[event].push(handler);
@@ -58,6 +55,10 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
 
     Net.prototype.sendState = function (userID, state) {
         this.socket.emit('update-state', userID, state);
+    };
+
+    Net.prototype.join = function (name) {
+        this.socket.emit('join', name);
     };
 
     return new Net();

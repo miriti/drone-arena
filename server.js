@@ -19,54 +19,51 @@ io.on('connection', function (socket) {
 
     console.log('user connected. ID:', userID);
 
-    var userData = {
-        id: userID,
-        name: 'Player #' + userID,
-        frags: 0,
-        ping: 0,
-        state: {
-            control: {
-                left: false,
-                right: false,
-                up: false,
-                down: false
-            },
-            position: {
-                x: -500 + Math.random() * 1000,
-                y: -250 + Math.random() * 500
-            }
-        }
-    };
-
     socket.emit('current-state', connectedUsers);
 
-    connectedUsers[userID.toString()] = userData;
+    var pingInterval;
 
-    socket.emit('init', userData, new Date().getTime());
-    socket.broadcast.emit('join', userData);
-    socket.emit('ping');
+    socket.on('join', function (name) {
+        var userData = {
+            id: userID,
+            name: name,
+            frags: 0,
+            ping: 0,
+            state: {
+                control: {
+                    left: false,
+                    right: false,
+                    up: false,
+                    down: false
+                },
+                position: {
+                    x: -500 + Math.random() * 1000,
+                    y: -250 + Math.random() * 500
+                }
+            }
+        };
 
-    broadcast_usersList();
+        connectedUsers[userID.toString()] = userData;
 
-    socket.on('name', function (newName) {
-        connectedUsers[userID.toString()]['name'] = newName;
+        socket.emit('init', userData, new Date().getTime());
+        socket.broadcast.emit('join', userData);
+
         broadcast_usersList();
+
+        pingInterval = setInterval(function () {
+            lastPingTime = new Date().getTime();
+            socket.emit('ping');
+        }, 10000);
+
+        socket.on('pong', function () {
+            connectedUsers[userID.toString()]['ping'] = new Date().getTime() - lastPingTime;
+            broadcast_usersList();
+        });
     });
 
     socket.on('update-state', function (id, state) {
         connectedUsers[id.toString()]['state'] = state;
         socket.broadcast.emit('update-state', id, state);
-    });
-
-    var pingInterval = setInterval(function () {
-        console.log('Ping', userID);
-        lastPingTime = new Date().getTime();
-        socket.emit('ping');
-    }, 10000);
-
-    socket.on('pong', function () {
-        connectedUsers[userID.toString()]['ping'] = new Date().getTime() - lastPingTime;
-        broadcast_usersList();
     });
 
     socket.on('disconnect', function () {
