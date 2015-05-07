@@ -19,13 +19,15 @@ require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena', 'input'], functio
 
     window.onresize();
 
+    // Loop
     function animationFrame() {
-        var currentTime = new Date().getTime();
+        if (Time.currentTime !== null) {
+            var currentTime = new Date().getTime();
+            Time.update(currentTime - lastTime);
+            lastTime = currentTime;
 
-        Time.update(currentTime - lastTime);
-        lastTime = currentTime;
-
-        scene.update(Time.delta);
+            scene.update(Time.delta);
+        }
         renderer.render(scene);
         requestAnimationFrame(animationFrame);
     }

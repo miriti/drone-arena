@@ -19,6 +19,8 @@ io.on('connection', function (socket) {
 
     console.log('user connected. ID:', userID);
 
+    socket.emit('sync-time', new Date().getTime());
+
     socket.emit('current-state', connectedUsers);
 
     var pingInterval;
@@ -29,6 +31,7 @@ io.on('connection', function (socket) {
             name: name,
             frags: 0,
             ping: 0,
+            state_timestamp: new Date().getTime(),
             state: {
                 control: {
                     left: false,
@@ -45,7 +48,7 @@ io.on('connection', function (socket) {
 
         connectedUsers[userID.toString()] = userData;
 
-        socket.emit('init', userData, new Date().getTime());
+        socket.emit('init', userData);
         socket.broadcast.emit('join', userData);
 
         broadcast_usersList();
@@ -61,9 +64,9 @@ io.on('connection', function (socket) {
         });
     });
 
-    socket.on('update-state', function (id, state) {
+    socket.on('update-state', function (timestamp, id, state) {
         connectedUsers[id.toString()]['state'] = state;
-        socket.broadcast.emit('update-state', id, state);
+        socket.broadcast.emit('update-state', timestamp, id, state);
     });
 
     socket.on('disconnect', function () {

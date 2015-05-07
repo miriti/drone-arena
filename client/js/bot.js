@@ -1,4 +1,4 @@
-define(['gameObject', 'lib/pixi/bin/pixi'], function (GameObject, PIXI) {
+define(['gameObject', 'lib/pixi/bin/pixi', 'time'], function (GameObject, PIXI, Time) {
     function Bot(userID) {
         GameObject.call(this);
 
@@ -22,10 +22,24 @@ define(['gameObject', 'lib/pixi/bin/pixi'], function (GameObject, PIXI) {
     Bot.prototype = Object.create(GameObject.prototype);
     Bot.prototype.constructor = Bot;
 
-    Bot.prototype.setState = function (state) {
+    Bot.prototype.setState = function (timestamp, state) {
         this.x = state.position.x;
         this.y = state.position.y;
         this.control = state.control;
+
+        // TODO discard all created stuff to this point
+
+        if (Time.currentTime !== null) {
+            var delta = Time.currentTime - timestamp;
+            var updateRate = 1000 / 60;
+
+            while (delta > updateRate) {
+                this.update(updateRate);
+                delta -= updateRate;
+            }
+
+            if (delta > 0) this.update(delta);
+        }
     };
 
     Bot.prototype.getState = function () {

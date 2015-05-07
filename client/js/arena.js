@@ -15,7 +15,7 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
         net.on('current-state', function (connectedUsers) {
             for (var userID in connectedUsers) {
                 if (!self.bots.hasOwnProperty(userID.toString())) {
-                    var newBot = self.spawnBot(userID, connectedUsers[userID]['state'], Bot);
+                    var newBot = self.spawnBot(userID, connectedUsers[userID]['state_timestamp'], connectedUsers[userID]['state'], Bot);
 
                     self.addBot(userID, newBot);
                 }
@@ -23,7 +23,7 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
         });
 
         net.on('init', function (userData) {
-            var newBot = self.spawnBot(userData['id'], userData['state'], PlayerBot);
+            var newBot = self.spawnBot(userData['id'], userData['state_timestamp'], userData['state'], PlayerBot);
 
             self.addBot(userData.id, newBot);
 
@@ -31,7 +31,7 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
         });
 
         net.on('join', function (userData) {
-            self.addBot(userData.id, self.spawnBot(userData['id'], userData['state'], Bot));
+            self.addBot(userData.id, self.spawnBot(userData['id'], userData['state_timestamp'], userData['state'], Bot));
         });
 
         net.on('leave', function (userID) {
@@ -39,16 +39,16 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
         });
 
         net.on('update-state', function (data) {
-            self.bots[data.userID.toString()].setState(data['state']);
+            self.bots[data['userID'].toString()].setState(data['timestamp'], data['state']);
         });
     }
 
     Arena.prototype = Object.create(GameObject.prototype);
     Arena.prototype.constructor = Arena;
 
-    Arena.prototype.spawnBot = function (id, state, botClass) {
+    Arena.prototype.spawnBot = function (id, timestamp, state, botClass) {
         var newBot = new botClass(id);
-        newBot.setState(state);
+        newBot.setState(timestamp, state);
         return newBot;
     };
 

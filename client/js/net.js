@@ -17,12 +17,15 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
 
         var self = this;
 
+        this.socket.on('sync-time', function (timestamp) {
+            Time.currentTime = timestamp;
+        });
+
         this.socket.on('current-state', function (connectedUsers) {
             self.fire('current-state', connectedUsers);
         });
 
-        this.socket.on('init', function (userData, timestamp) {
-            Time.currentTime = timestamp;
+        this.socket.on('init', function (userData) {
             self.fire('init', userData);
         });
 
@@ -39,8 +42,8 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
             self.fire('users-list', updatedList);
         });
 
-        this.socket.on('update-state', function (userID, state) {
-            self.fire('update-state', {userID: userID, state: state});
+        this.socket.on('update-state', function (timestamp, userID, state) {
+            self.fire('update-state', {timestamp: timestamp, userID: userID, state: state});
         });
 
         this.socket.on('ping', function () {
@@ -54,7 +57,7 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
     };
 
     Net.prototype.sendState = function (userID, state) {
-        this.socket.emit('update-state', userID, state);
+        this.socket.emit('update-state', Time.currentTime, userID, state);
     };
 
     Net.prototype.join = function (name) {
