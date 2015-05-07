@@ -30,6 +30,9 @@ define(['time', 'keys'], function (Time, Keys) {
                 e.preventDefault();
                 self.onKeyUp(e);
             });
+
+            object.addEventListener('mousemove', function (e) {
+            });
         }
     };
 

@@ -1,4 +1,4 @@
-define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot, PlayerBot) {
+define(['gameObject', 'net', 'bot', 'playerBot', 'util'], function (GameObject, net, Bot, PlayerBot, util) {
     /**
      *
      * @constructor
@@ -23,6 +23,7 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
         });
 
         net.on('init', function (userData) {
+            // Create player's bot
             var newBot = self.spawnBot(userData['id'], userData['state_timestamp'], userData['state'], PlayerBot);
 
             self.addBot(userData.id, newBot);
@@ -41,6 +42,19 @@ define(['gameObject', 'net', 'bot', 'playerBot'], function (GameObject, net, Bot
         net.on('update-state', function (data) {
             self.bots[data['userID'].toString()].setState(data['timestamp'], data['state']);
         });
+
+        for (var i = -10; i <= 10; i++) {
+            for (var j = -10; j <= 10; j++) {
+                var g = new PIXI.Graphics();
+                g.beginFill(util.xor(i % 2 == 0, j % 2 == 0) ? 0x333333 : 0x555555);
+                g.drawRect(0, 0, 100, 100);
+                g.endFill();
+
+                g.x = i * 100;
+                g.y = j * 100;
+                this.addChild(g);
+            }
+        }
     }
 
     Arena.prototype = Object.create(GameObject.prototype);

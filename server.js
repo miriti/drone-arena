@@ -42,6 +42,10 @@ io.on('connection', function (socket) {
                 position: {
                     x: -500 + Math.random() * 1000,
                     y: -250 + Math.random() * 500
+                },
+                velocity: {
+                    x: 0,
+                    y: 0
                 }
             }
         };
@@ -65,8 +69,10 @@ io.on('connection', function (socket) {
     });
 
     socket.on('update-state', function (timestamp, id, state) {
-        connectedUsers[id.toString()]['state'] = state;
-        socket.broadcast.emit('update-state', timestamp, id, state);
+        if (connectedUsers.hasOwnProperty(id.toString())) {
+            connectedUsers[id.toString()]['state'] = state;
+            socket.broadcast.emit('update-state', timestamp, id, state);
+        }
     });
 
     socket.on('disconnect', function () {

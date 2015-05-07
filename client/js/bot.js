@@ -11,9 +11,11 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time'], function (GameObject, PIXI, 
             down: false
         };
 
+        this.velocity = {x: 0, y: 0};
+
         var gr = new PIXI.Graphics();
         gr.beginFill(0xffffff);
-        gr.drawRect(-20, -20, 40, 40);
+        gr.drawRect(-10, -10, 20, 20);
         gr.endFill();
 
         this.addChild(gr);
@@ -26,6 +28,7 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time'], function (GameObject, PIXI, 
         this.x = state.position.x;
         this.y = state.position.y;
         this.control = state.control;
+        this.velocity = state.velocity;
 
         // TODO discard all created stuff to this point
 
@@ -48,28 +51,34 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time'], function (GameObject, PIXI, 
             position: {
                 x: this.x,
                 y: this.y
-            }
+            },
+            velocity: this.velocity
         };
     };
 
     Bot.prototype.update = function (delta) {
         GameObject.prototype.update.call(this, delta);
 
+        var acceletation = 200;
+
         if (this.control.left) {
-            this.x -= 100 * (delta / 1000);
+            this.velocity.x -= acceletation * (delta / 1000);
         }
 
         if (this.control.right) {
-            this.x += 100 * (delta / 1000);
+            this.velocity.x += acceletation * (delta / 1000);
         }
 
         if (this.control.up) {
-            this.y -= 100 * (delta / 1000);
+            this.velocity.y -= acceletation * (delta / 1000);
         }
 
         if (this.control.down) {
-            this.y += 100 * (delta / 1000);
+            this.velocity.y += acceletation * (delta / 1000);
         }
+
+        this.x += this.velocity.x * (delta / 1000);
+        this.y += this.velocity.y * (delta / 1000);
     };
 
     return Bot;

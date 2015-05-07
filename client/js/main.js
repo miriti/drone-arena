@@ -36,7 +36,7 @@ require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena', 'input'], functio
 
     net.connect();
 
-    document.querySelector('#join-button').onclick = function (e) {
+    var joinWithName = function (e) {
         var name = (document.querySelector('#user-name-input').value).trim();
         if (name.length >= 3) {
             document.querySelector('#modal-container').style.display = 'none';
@@ -45,5 +45,12 @@ require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena', 'input'], functio
         } else {
             alert('3 characters minimum');
         }
-    }
+    };
+
+    document.querySelector('#join-button').onclick = joinWithName;
+    document.querySelector('#user-name-input').onkeydown = function (e) {
+        if (e.keyCode == 13) {
+            joinWithName();
+        }
+    };
 });
