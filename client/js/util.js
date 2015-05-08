@@ -1,5 +1,14 @@
 define(function () {
     return {
+        copyObject: function (from, to) {
+            for (var k in from) {
+                if ((typeof from[k] === 'object') && (typeof to[k] === 'object')) {
+                    this.copyObject(from[k], to[k]);
+                } else {
+                    to[k] = from[k];
+                }
+            }
+        },
         cloneObject: function (obj) {
             if (typeof obj === 'object') {
                 var newObject = {};
@@ -11,23 +20,11 @@ define(function () {
                 return obj;
             }
         },
-        compareObjects: function (obj1, obj2) {
-            if ((typeof  obj1 === 'object') && (typeof obj2 === 'object')) {
-                var result = true;
-                for (var f in obj1) {
-                    if (obj2.hasOwnProperty(f)) {
-                        result &= this.compareObjects(obj1[f], obj2[f]);
-                    } else {
-                        return false;
-                    }
-                }
-                return result;
-            } else {
-                return obj1 === obj2;
-            }
-        },
         xor: function (a, b) {
             return ( a ? 1 : 0 ) ^ ( b ? 1 : 0 );
+        },
+        d: function (delta) {
+            return delta / 1000;
         }
     }
 });

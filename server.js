@@ -17,8 +17,6 @@ io.on('connection', function (socket) {
     var userID = ++nextID;
     var lastPingTime = new Date().getTime();
 
-    console.log('user connected. ID:', userID);
-
     socket.emit('sync-time', new Date().getTime());
 
     socket.emit('current-state', connectedUsers);
@@ -26,6 +24,13 @@ io.on('connection', function (socket) {
     var pingInterval;
 
     socket.on('join', function (name) {
+
+        for (var id in connectedUsers) {
+            if (connectedUsers[id]['name'].toLowerCase() == name.toLowerCase()) {
+                name = 'Fake ' + name;
+            }
+        }
+
         var userData = {
             id: userID,
             name: name,
@@ -76,8 +81,6 @@ io.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
-        console.log('user disconnected. ID:', userID);
-
         socket.broadcast.emit('leave', userID);
 
         clearInterval(pingInterval);

@@ -1,17 +1,25 @@
-define(['gameObject', 'lib/pixi/bin/pixi', 'time'], function (GameObject, PIXI, Time) {
+define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector'], function (GameObject, PIXI, Time, util, Vector) {
     function Bot(userID) {
         GameObject.call(this);
 
         this.userID = userID;
 
-        this.control = {
-            left: false,
-            right: false,
-            up: false,
-            down: false
+        this.state = {
+            position: {
+                x: 0,
+                y: 0
+            },
+            control: {
+                left: false,
+                right: false,
+                up: false,
+                down: false
+            },
+            velocity: {
+                x: 0,
+                y: 0
+            }
         };
-
-        this.velocity = {x: 0, y: 0};
 
         var gr = new PIXI.Graphics();
         gr.beginFill(0xffffff);
@@ -25,10 +33,14 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time'], function (GameObject, PIXI, 
     Bot.prototype.constructor = Bot;
 
     Bot.prototype.setState = function (timestamp, state) {
+
+        util.copyObject(state, this.state);
+        for (var p in state) {
+            this.state[p] = state[p];
+        }
+
         this.x = state.position.x;
         this.y = state.position.y;
-        this.control = state.control;
-        this.velocity = state.velocity;
 
         // TODO discard all created stuff to this point
 
@@ -46,39 +58,36 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time'], function (GameObject, PIXI, 
     };
 
     Bot.prototype.getState = function () {
-        return {
-            control: this.control,
-            position: {
-                x: this.x,
-                y: this.y
-            },
-            velocity: this.velocity
-        };
+        this.state.position.x = this.x;
+        this.state.position.y = this.y;
+        return this.state;
     };
 
     Bot.prototype.update = function (delta) {
         GameObject.prototype.update.call(this, delta);
 
-        var acceletation = 200;
+        var acceletation = 1000;
 
-        if (this.control.left) {
-            this.velocity.x -= acceletation * (delta / 1000);
+        if (this.state.control.left) {
+            this.state.velocity.x -= acceletation * util.d(delta);
         }
 
-        if (this.control.right) {
-            this.velocity.x += acceletation * (delta / 1000);
+        if (this.state.control.right) {
+            this.state.velocity.x += acceletation * util.d(delta);
         }
 
-        if (this.control.up) {
-            this.velocity.y -= acceletation * (delta / 1000);
+        if (this.state.control.up) {
+            this.state.velocity.y -= acceletation * util.d(delta);
         }
 
-        if (this.control.down) {
-            this.velocity.y += acceletation * (delta / 1000);
+        if (this.state.control.down) {
+            this.state.velocity.y += acceletation * util.d(delta);
         }
 
-        this.x += this.velocity.x * (delta / 1000);
-        this.y += this.velocity.y * (delta / 1000);
+        Vector.prototype.limit.call(this.state.velocity, 300);
+
+        this.x += this.state.velocity.x * util.d(delta);
+        this.y += this.state.velocity.y * util.d(delta);
     };
 
     return Bot;

@@ -22,6 +22,7 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
         });
 
         this.socket.on('current-state', function (connectedUsers) {
+            console.log(connectedUsers);
             self.fire('current-state', connectedUsers);
         });
 
