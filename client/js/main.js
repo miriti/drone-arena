@@ -1,13 +1,23 @@
-require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena', 'input'], function (PIXI, Scene, Time, net, Arena, Input) {
+require(['lib/pixi/bin/pixi', 'gameObject', 'scene', 'time', 'net', 'arena', 'input', 'keys', 'hud/hud', 'chat', 'query', 'util'], function (PIXI, GameObject, Scene, Time, net, Arena, Input, Keys, HUD, Chat, $, util) {
 
     var renderer = new PIXI.WebGLRenderer(window.innerWidth, window.innerHeight);
 
-    document.querySelector('#canvas-container').innerHTML = '';
-    document.querySelector('#canvas-container').appendChild(renderer.view);
+
+    $('#canvas-container').innerHTML = '';
+    $('#canvas-container').appendChild(renderer.view);
+
+    renderer.view.onclick = function (e) {
+        Chat.blur();
+    };
+
+    var stage = new GameObject();
 
     var scene = new Scene();
 
     scene.addChild(new Arena());
+
+    stage.addChild(scene);
+    stage.addChild(new HUD());
 
     var lastTime = new Date().getTime();
 
@@ -26,9 +36,9 @@ require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena', 'input'], functio
             Time.update(currentTime - lastTime);
             lastTime = currentTime;
 
-            scene.update(Time.delta);
+            stage.update(Time.delta);
         }
-        renderer.render(scene);
+        renderer.render(stage);
         requestAnimationFrame(animationFrame);
     }
 
@@ -37,20 +47,36 @@ require(['lib/pixi/bin/pixi', 'scene', 'time', 'net', 'arena', 'input'], functio
     net.connect();
 
     var joinWithName = function (e) {
-        var name = (document.querySelector('#user-name-input').value).trim();
+        var name = util.stripHtml(($('#user-name-input').value).trim());
+
+        $('#user-name-input').value = name;
+
         if (name.length >= 3) {
-            document.querySelector('#modal-container').style.display = 'none';
+            $('#name-dialog').style.display = 'none';
             net.join(name);
             Input.init(window);
+            Chat.show();
         } else {
             alert('3 characters minimum');
         }
     };
 
-    document.querySelector('#join-button').onclick = joinWithName;
-    document.querySelector('#user-name-input').onkeydown = function (e) {
+    var modals = document.querySelectorAll('div.modal-container');
+
+    for (var i = 0; i < modals.length; i++) {
+        modals[i].onkeydown = function (e) {
+            if (e.keyCode == Keys.ESCAPE) {
+                this.style.display = 'none';
+            }
+        }
+    }
+
+    $('#join-button').onclick = joinWithName;
+    $('#user-name-input').onkeydown = function (e) {
         if (e.keyCode == 13) {
             joinWithName();
         }
     };
+
+    Chat.init();
 });

@@ -25,6 +25,11 @@ define(function () {
         },
         d: function (delta) {
             return delta / 1000;
+        },
+        stripHtml: function (html) {
+            var tmp = document.createElement("DIV");
+            tmp.innerHTML = html;
+            return tmp.textContent || tmp.innerText || "";
         }
     }
 });

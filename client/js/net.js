@@ -2,6 +2,8 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
     function Net() {
         this.socket = null;
         this.eventListeners = {};
+        this.userID = null;
+        this.usersList = null;
     }
 
     Net.prototype.fire = function (event, data) {
@@ -22,11 +24,11 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
         });
 
         this.socket.on('current-state', function (connectedUsers) {
-            console.log(connectedUsers);
             self.fire('current-state', connectedUsers);
         });
 
         this.socket.on('init', function (userData) {
+            self.userID = userData['id'];
             self.fire('init', userData);
         });
 
@@ -40,6 +42,7 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
         });
 
         this.socket.on('users-list', function (updatedList) {
+            self.usersList = updatedList;
             self.fire('users-list', updatedList);
         });
 
@@ -49,6 +52,13 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
 
         this.socket.on('ping', function () {
             self.socket.emit('pong');
+        });
+
+        this.socket.on('chat', function (userID, text) {
+            self.fire('chat', {
+                userID: userID,
+                text: text
+            });
         });
     };
 
@@ -63,6 +73,10 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
 
     Net.prototype.join = function (name) {
         this.socket.emit('join', name);
+    };
+
+    Net.prototype.say = function (text) {
+        this.socket.emit('say', text);
     };
 
     return new Net();

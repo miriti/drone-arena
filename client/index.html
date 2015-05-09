@@ -11,9 +11,10 @@
         html, body {
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
 
-        #modal-container {
+        .modal-container {
             position: fixed;
             left: 0;
             right: 0;
@@ -22,7 +23,7 @@
             background-color: rgba(0, 0, 0, 0.8);
         }
 
-        #modal-container .window-container {
+        .modal-container .window-container {
             margin: 100px auto;
             padding: 10px;
             width: 400px;
@@ -33,23 +34,84 @@
             font-size: 16px;
             padding: 5px;
         }
+
+        .chat-window {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            width: 400px;
+            background: #fff;
+            opacity: 0.6;
+            display: none;
+            padding: 3px;
+        }
+
+        .chat-window .title {
+            font-weight: bold;
+            padding: 3px;
+            border-bottom: 1px solid #000000;
+        }
+
+        .chat-window .title .hide-chat {
+            float: right;
+        }
+
+        .chat-window #chat-log {
+            height: 150px;
+            overflow: auto;
+            font-size: 12px;
+        }
+
+        .chat-window #chat-log .name {
+            font-weight: bold;
+        }
+
+        .chat-window input {
+            width: 95%;
+        }
+
+        .show-chat {
+            position: fixed;
+            display: none;
+            right: 0;
+            bottom: 0;
+        }
+
+        .show-chat a {
+            color: #ffffff;
+        }
     </style>
 </head>
 <body>
 <div id="canvas-container">
     <h1>Loading...</h1>
 </div>
-<div id="modal-container">
+<div class="modal-container" id="name-dialog">
     <div class="window-container">
         <div>Enter your name:</div>
 
         <div>
-            <input type="text" id="user-name-input">
+            <input type="text" id="user-name-input" autofocus="true">
         </div>
         <div>
             <button id="join-button">Join</button>
         </div>
     </div>
+</div>
+
+
+<div class="chat-window">
+    <div class="title">Chat <a class="hide-chat" href="#">hide</a></div>
+    <div id="chat-log">
+
+    </div>
+    <div class="input">
+        <input type="text" id="chat-message">
+    </div>
+</div>
+
+<div class="show-chat">
+    <a href="#">Chat</a>
 </div>
 
 <script data-main="js/main" src="js/lib/requirejs/require.js"></script>

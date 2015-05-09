@@ -1,6 +1,7 @@
 define(['time', 'keys'], function (Time, Keys) {
     var Input = {
         keysPressed: [],
+        callbacks: [],
         onKeyDown: function (e) {
             this.keysPressed[e.keyCode] = this.keysPressed[e.keyCode] || Time.currentTime;
         },
@@ -22,12 +23,10 @@ define(['time', 'keys'], function (Time, Keys) {
         init: function (object) {
             var self = this;
             object.addEventListener('keydown', function (e) {
-                e.preventDefault();
                 self.onKeyDown(e);
             });
 
             object.addEventListener('keyup', function (e) {
-                e.preventDefault();
                 self.onKeyUp(e);
             });
 

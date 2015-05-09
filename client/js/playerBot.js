@@ -1,6 +1,8 @@
-define(['bot', 'input', 'net', 'util'], function (Bot, Input, net, util) {
+define(['bot', 'input', 'net', 'util', 'time'], function (Bot, Input, net, util, Time) {
     var PlayerBot = function (userID) {
         Bot.call(this, userID);
+
+        this.stateSentTime = Time.currentTime;
 
         this.control = {
             left: false,
@@ -13,6 +15,7 @@ define(['bot', 'input', 'net', 'util'], function (Bot, Input, net, util) {
         Object.observe(this.control, function (changes) {
             util.copyObject(self.control, self.state.control);
             net.sendState(self.userID, self.getState());
+            self.stateSentTime = Time.currentTime;
         });
     };
 
@@ -20,6 +23,12 @@ define(['bot', 'input', 'net', 'util'], function (Bot, Input, net, util) {
     PlayerBot.prototype.constructor = Bot;
 
     PlayerBot.prototype.update = function (delta) {
+
+        if (Time.currentTime - this.stateSentTime > 1000) {
+            net.sendState(this.userID, this.getState());
+            this.stateSentTime = Time.currentTime;
+        }
+
         this.control.left = Input.isLeft();
         this.control.right = Input.isRight();
         this.control.up = Input.isUp();

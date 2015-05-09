@@ -80,6 +80,10 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('say', function (text) {
+        socket.broadcast.emit('chat', userID, text);
+    });
+
     socket.on('disconnect', function () {
         socket.broadcast.emit('leave', userID);
 
