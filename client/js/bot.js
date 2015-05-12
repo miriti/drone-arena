@@ -1,4 +1,4 @@
-define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector'], function (GameObject, PIXI, Time, util, Vector) {
+define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/machinegun'], function (GameObject, PIXI, Time, util, Vector, MachineGun) {
     function Bot(userID) {
         GameObject.call(this);
 
@@ -13,12 +13,18 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector'], function (
                 left: false,
                 right: false,
                 up: false,
-                down: false
+                down: false,
+                fire: false
             },
             velocity: {
                 x: 0,
                 y: 0
             }
+        };
+
+        this.gun = new MachineGun();
+        this.gun.shot = function () {
+            console.log('Bang!');
         };
 
         var gr = new PIXI.Graphics();
@@ -66,28 +72,52 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector'], function (
     Bot.prototype.update = function (delta) {
         GameObject.prototype.update.call(this, delta);
 
-        var acceletation = 1000;
+        var ctrl = this.state.control;
 
-        if (this.state.control.left) {
+        if (!ctrl.left && !ctrl.right && !ctrl.up && !ctrl.down) {
+        }
+
+        var acceletation = 800;
+
+        if (ctrl.left) {
             this.state.velocity.x -= acceletation * util.d(delta);
         }
 
-        if (this.state.control.right) {
+        if (ctrl.right) {
             this.state.velocity.x += acceletation * util.d(delta);
         }
 
-        if (this.state.control.up) {
+        if (ctrl.up) {
             this.state.velocity.y -= acceletation * util.d(delta);
         }
 
-        if (this.state.control.down) {
+        if (ctrl.down) {
             this.state.velocity.y += acceletation * util.d(delta);
         }
 
-        Vector.prototype.limit.call(this.state.velocity, 300);
+        Vector.prototype.limit.call(this.state.velocity, 400);
 
         this.x += this.state.velocity.x * util.d(delta);
         this.y += this.state.velocity.y * util.d(delta);
+
+        if (this.x < -1000) {
+            this.x = -1000;
+            this.state.velocity.x *= -1;
+        }
+        if (this.x > 1100) {
+            this.x = 1100;
+            this.state.velocity.x *= -1;
+        }
+        if (this.y < -1000) {
+            this.y = -1000;
+            this.state.velocity.y *= -1;
+        }
+        if (this.y > 1100) {
+            this.y = 1100;
+            this.state.velocity.y *= -1;
+        }
+
+        this.gun.update(delta);
     };
 
     return Bot;

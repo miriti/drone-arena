@@ -1,5 +1,15 @@
 define(function () {
     return {
+        extend: function (a, b, extension) {
+            a.prototype = Object.create(b.prototype);
+            a.prototype.constructor = a;
+
+            if (typeof extension !== 'undefined') {
+                for (var k in extension) {
+                    a.prototype[k] = extension[k];
+                }
+            }
+        },
         copyObject: function (from, to) {
             for (var k in from) {
                 if ((typeof from[k] === 'object') && (typeof to[k] === 'object')) {
