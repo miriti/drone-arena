@@ -4,18 +4,11 @@ define(['bot', 'input', 'net', 'util', 'time'], function (Bot, Input, net, util,
 
         this.stateSentTime = Time.currentTime;
 
-        this.control = {
-            left: false,
-            right: false,
-            up: false,
-            down: false
-        };
-
         var self = this;
-        Object.observe(this.control, function (changes) {
-            util.copyObject(self.control, self.state.control);
+
+        Input.observers.push(function (timestamp, controls) {
+            util.copyObject(Input.currentState, self.state.control);
             net.sendState(self.userID, self.getState());
-            self.stateSentTime = Time.currentTime;
         });
     };
 
@@ -28,11 +21,6 @@ define(['bot', 'input', 'net', 'util', 'time'], function (Bot, Input, net, util,
             net.sendState(this.userID, this.getState());
             this.stateSentTime = Time.currentTime;
         }
-
-        this.control.left = Input.isLeft();
-        this.control.right = Input.isRight();
-        this.control.up = Input.isUp();
-        this.control.down = Input.isDown();
 
         Bot.prototype.update.call(this, delta);
     };

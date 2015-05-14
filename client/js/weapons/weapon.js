@@ -1,6 +1,6 @@
 define(function () {
     var Weapon = function () {
-        this.shotInterval = 300;
+        this.shotInterval = 250;
         this.fire = false;
         this.resetTime = true;
 
@@ -20,7 +20,7 @@ define(function () {
     Weapon.prototype.endFire = function () {
         this.fire = false;
         if (this.resetTime) {
-            this._shotIntervalTime = 0;
+            this._shotIntervalTime = this.shotInterval;
         }
     };
 

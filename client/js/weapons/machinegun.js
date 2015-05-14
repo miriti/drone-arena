@@ -1,4 +1,4 @@
-define(['weapon', '../util'], function (Weapon) {
+define(['weapons/weapon', 'util'], function (Weapon, util) {
     var MachineGun = function () {
         Weapon.call(this);
     };
@@ -6,4 +6,6 @@ define(['weapon', '../util'], function (Weapon) {
     util.extend(MachineGun, Weapon, {
 
     });
+
+    return MachineGun;
 });

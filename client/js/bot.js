@@ -14,7 +14,8 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
                 right: false,
                 up: false,
                 down: false,
-                fire: false
+                fire: false,
+                rotation: 0
             },
             velocity: {
                 x: 0,
@@ -77,23 +78,25 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
         if (!ctrl.left && !ctrl.right && !ctrl.up && !ctrl.down) {
         }
 
-        var acceletation = 800;
+        var acceleration = 800;
 
         if (ctrl.left) {
-            this.state.velocity.x -= acceletation * util.d(delta);
+            this.state.velocity.x -= acceleration * util.d(delta);
         }
 
         if (ctrl.right) {
-            this.state.velocity.x += acceletation * util.d(delta);
+            this.state.velocity.x += acceleration * util.d(delta);
         }
 
         if (ctrl.up) {
-            this.state.velocity.y -= acceletation * util.d(delta);
+            this.state.velocity.y -= acceleration * util.d(delta);
         }
 
         if (ctrl.down) {
-            this.state.velocity.y += acceletation * util.d(delta);
+            this.state.velocity.y += acceleration * util.d(delta);
         }
+
+        this.rotation = this.state.control.rotation;
 
         Vector.prototype.limit.call(this.state.velocity, 400);
 
@@ -115,6 +118,14 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
         if (this.y > 1100) {
             this.y = 1100;
             this.state.velocity.y *= -1;
+        }
+
+        if (this.gun.fire != this.state.control.fire) {
+            if (this.gun.fire) {
+                this.gun.endFire();
+            } else {
+                this.gun.startFire();
+            }
         }
 
         this.gun.update(delta);

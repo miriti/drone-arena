@@ -78,5 +78,7 @@ require(['lib/pixi/bin/pixi', 'gameObject', 'scene', 'time', 'net', 'arena', 'in
         }
     };
 
+    $('#name-dialog').style.display = 'block';
+
     Chat.init();
 });
