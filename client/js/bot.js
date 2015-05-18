@@ -1,10 +1,11 @@
-define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/machinegun'], function (GameObject, PIXI, Time, util, Vector, MachineGun) {
+define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/machinegun', 'view/drone'], function (GameObject, PIXI, Time, util, Vector, MachineGun, Drone) {
     function Bot(userID) {
         GameObject.call(this);
 
         this.userID = userID;
 
         this.state = {
+            health: 100,
             position: {
                 x: 0,
                 y: 0
@@ -23,17 +24,12 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
             }
         };
 
-        this.gun = new MachineGun();
-        this.gun.shot = function () {
-            console.log('Bang!');
-        };
+        this.stuff = {};
 
-        var gr = new PIXI.Graphics();
-        gr.beginFill(0xffffff);
-        gr.drawRect(-10, -10, 20, 20);
-        gr.endFill();
+        this.gun = new MachineGun(this);
 
-        this.addChild(gr);
+        this.view = new Drone();
+        this.addChild(this.view);
     };
 
     Bot.prototype = Object.create(GameObject.prototype);
@@ -49,18 +45,34 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
         this.x = state.position.x;
         this.y = state.position.y;
 
-        // TODO discard all created stuff to this point
+        for (var time in this.stuff) {
+            if (time >= timestamp) {
+                if (this.stuff[time].parent != null)
+                    this.stuff[time].parent.removeChild(this.stuff[time]);
+            }
+        }
+        this.stuff = {};
 
         if (Time.currentTime !== null) {
             var delta = Time.currentTime - timestamp;
             var updateRate = 1000 / 60;
 
+            var upd = function (self, delta) {
+                self.update(delta);
+
+                for (var t in self.stuff) {
+                    self.stuff[t].update(delta);
+                }
+            };
+
             while (delta > updateRate) {
-                this.update(updateRate);
+                upd(this, updateRate);
                 delta -= updateRate;
             }
 
-            if (delta > 0) this.update(delta);
+            if (delta > 0) {
+                upd(this, delta);
+            }
         }
     };
 
@@ -74,8 +86,10 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
         GameObject.prototype.update.call(this, delta);
 
         var ctrl = this.state.control;
+        var self = this;
 
         if (!ctrl.left && !ctrl.right && !ctrl.up && !ctrl.down) {
+
         }
 
         var acceleration = 800;
@@ -120,7 +134,7 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
             this.state.velocity.y *= -1;
         }
 
-        if (this.gun.fire != this.state.control.fire) {
+        if ((this.gun.fire != this.state.control.fire) && (typeof this.state.control.fire !== 'undefined')) {
             if (this.gun.fire) {
                 this.gun.endFire();
             } else {
@@ -128,7 +142,12 @@ define(['gameObject', 'lib/pixi/bin/pixi', 'time', 'util', 'vector', 'weapons/ma
             }
         }
 
-        this.gun.update(delta);
+        this.gun.update(delta, function (projectile) {
+            self.stuff[Time.currentTime] = projectile;
+        });
+    };
+
+    Bot.prototype.hit = function (projectile) {
     };
 
     return Bot;

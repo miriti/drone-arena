@@ -33,7 +33,6 @@ define(['/socket.io/socket.io.js', 'time'], function (io, Time) {
         });
 
         this.socket.on('join', function (userData) {
-            console.log(userData['name'], 'has joined the game');
             self.fire('join', userData);
         });
 

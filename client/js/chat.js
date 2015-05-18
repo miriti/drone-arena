@@ -1,4 +1,4 @@
-define(['query', 'keys', 'net', 'util'], function ($, Keys, net, util) {
+define(['query', 'keys', 'util', 'net'], function ($, Keys, util, net) {
     return {
         blur: function () {
             $('#chat-message').blur();
@@ -13,6 +13,10 @@ define(['query', 'keys', 'net', 'util'], function ($, Keys, net, util) {
         },
         msg: function (name, text) {
             $('#chat-log').innerHTML += '<div><span class="name">' + name + '</span>: ' + util.stripHtml(text) + '</div>';
+            $('#chat-log').scrollTop = $('#chat-log').scrollHeight;
+        },
+        sysMsg: function (msg) {
+            $('#chat-log').innerHTML += '<div><span class="name system">SYSTEM</span>: ' + msg + '</div>';
             $('#chat-log').scrollTop = $('#chat-log').scrollHeight;
         },
         init: function () {
@@ -42,6 +46,14 @@ define(['query', 'keys', 'net', 'util'], function ($, Keys, net, util) {
 
             net.on('chat', function (data) {
                 self.msg(net.usersList[data['userID']]['name'], data['text']);
+            });
+
+            net.on('leave', function (userId) {
+                self.sysMsg('<strong>' + net.usersList[userId]['name'] + '</strong> has left the game');
+            });
+
+            net.on('join', function (data) {
+                self.sysMsg('<strong>' + data['name'] + '</strong> joined the game');
             });
         }
     }

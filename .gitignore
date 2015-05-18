@@ -4,3 +4,5 @@ build/Release
 node_modules
 .idea
 client/js/lib/requirejs
+.DS_Store
+

@@ -25,5 +25,17 @@ define(['bot', 'input', 'net', 'util', 'time'], function (Bot, Input, net, util,
         Bot.prototype.update.call(this, delta);
     };
 
+    /**
+     *
+     * @param projectile
+     */
+    PlayerBot.prototype.hit = function (projectile) {
+        this.state.health -= projectile.hitPoints;
+
+        if (this.state.health <= 0) {
+
+        }
+    };
+
     return PlayerBot;
 });
