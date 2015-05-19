@@ -1,15 +1,15 @@
 {
-  "name": "igdc123",
-  "version": "1.0.0",
-  "description": "igdc.ru #123: Arena Shooter",
+  "name": "drone-arena",
+  "version": "0.1.0",
+  "description": "Drone Arena - multiplayer action game",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "install": "deploy.sh"
   },
   "keywords": [
-    "igdc",
     "arena",
-    "shooter"
+    "shooter",
+    "drone"
   ],
   "author": "Michael \"KEFIR\" Miriti",
   "license": "MIT",
