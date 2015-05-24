@@ -1,3 +1,4 @@
+var config = require('./server/config.js');
 var express = require('express');
 var server = express();
 var http = require('http').Server(server);
@@ -95,6 +96,6 @@ io.on('connection', function (socket) {
     });
 });
 
-http.listen(3000, function () {
-    console.log('Listening to *:3000');
+http.listen(config['http_port'], function () {
+    console.log('Listening to *:%d', config['http_port']);
 });

@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "description": "Drone Arena - multiplayer action game",
   "main": "server.js",
-  "scripts": {
-    "install": "deploy.sh"
-  },
   "keywords": [
     "arena",
     "shooter",
